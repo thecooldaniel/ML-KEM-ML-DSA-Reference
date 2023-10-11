@@ -8,6 +8,7 @@ from ML_KEM.parameters import MLKEM_512 as params
 from rich import print
 from rich.panel import Panel
 from rich.markdown import Markdown
+from rich.text import Text
 
 from ML_KEM.helpers import add_list_modq
 
@@ -39,6 +40,11 @@ def KeyGen(d: bytes=None) -> (bytes, bytes):
     for idx, l in enumerate(e):
         eh[idx] = NTT(l)
 
+#   A is a k * k matrix
+#   s is a k * 1 matrix
+#   A*s is a k * 1 matrix
+#   A*s+e is a k * 1 matrix
+
 #   |     A     |   |  s  |   |  e  |
 #   | :-- | :-- |   | :-- |   | :-- |
 #   | 0,0 | 0,1 |   |  0  |   |  0  |
@@ -55,14 +61,12 @@ def KeyGen(d: bytes=None) -> (bytes, bytes):
 #   | As[1] + e[1] |
 
     # t = A * s
-    for i in range(0, params.k-1):
-        t1 = MultiplyNTTs(Ah[i][i], sh[i])
-        t2 = MultiplyNTTs(Ah[i][i+1], sh[i+1])
-        t[i] = add_list_modq(t1, t2)
-
-        t1 = MultiplyNTTs(Ah[i+1][i], sh[i])
-        t2 = MultiplyNTTs(Ah[i+1][i+1], sh[i+1])
-        t[i+1] = add_list_modq(t1, t2)
+    for i in range(0, params.k):
+        tmp = [[None] for _ in range(0, params.k)]
+        for j in range(0, params.k):
+            tmp[j] = MultiplyNTTs(Ah[i][j], sh[j])
+        for j in range(0, params.k - 1):
+            t[i] = add_list_modq(tmp[j], tmp[j+1])
 
     # t = A * s + e
     for i in range(0, params.k):
@@ -80,9 +84,9 @@ def KeyGen(d: bytes=None) -> (bytes, bytes):
     assert(len(ekPKE) == 384 * params.k + 32)
     assert(len(dkPKE) == 384 * params.k)
 
-    print(Markdown('**ek_PKE**'))
-    print(Panel(ekPKE.hex()))
-    print(Markdown('**dk_PKE**'))
-    print(Panel(dkPKE.hex()))
+    print()
+    print(Panel(ekPKE.hex(), title='ek_PKE', subtitle=f'{len(ekPKE)} bytes, {len(ekPKE) * 8} bits'))
+    print()
+    print(Panel(dkPKE.hex(), title='dk_PKE', subtitle=f'{len(dkPKE)} bytes, {len(dkPKE) * 8} bits'))
 
     return (ekPKE, dkPKE)
