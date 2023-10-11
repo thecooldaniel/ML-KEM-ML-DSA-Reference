@@ -1,0 +1,2 @@
+DEF_RADIX = 32
+DEF_OUTPUT = 'HEX'
