@@ -34,15 +34,23 @@ def BytesToBits(B: bytes) -> int:
 
 
 
-def Compress(d: int, x: int) -> int:
+def Compress(d: int, x: list) -> list:
     if d >= 12:
         raise ValueError('d must be less than 12')
-    return modq(round( (2**d // q) * x ))
+    t = []
+    for l in x:
+         r = round( (2**d / q) * l )
+         t.append(r)
+    return t
 
-def Decompress(d: int, y: int) -> int:
+def Decompress(d: int, y: list) -> list:
     if d >= 12:
         raise ValueError('d must be less than 12')
-    return modq(round( (q // 2**d) * y))
+    t = []
+    for l in y:
+        r = round( (q / 2**d) * l)
+        t.append(r)
+    return t
 
 
 

@@ -5,6 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/reference/kyber-c-testing.out",
+            "args": [],
+            "stopAtEntry": false,
+            // "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}/reference",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to AMD",
+                    "text": "-gdb-set disassembly-flavor amd",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask" : "make kyber-c-testing"
+        },
+        {
             "name": "main.py",
             "type": "python",
             "request": "launch",

@@ -3,8 +3,8 @@ from ML_KEM.helpers import modq
 from ML_KEM.Auxiliary.ConversionCompression import BytesToBits
 
 def SampleNTT(B: bytes) -> list:
-    if len(B) < 256 * 2:
-        raise ValueError(f'B must be at least of length {256 * 2}')
+    if len(B) < 672:
+        raise ValueError(f'B must be at least of length {672}')
     i = 0
     j = 0
     a = [0] * 256
@@ -47,6 +47,6 @@ def SamplePolyCBD(n: int, B: bytes) -> list:
             y += y2
 
         f1 = x - y
-        f2 = modq(f1)
-        f[i] = f2
+        # f2 = modq(f1)
+        f[i] = f1
     return f

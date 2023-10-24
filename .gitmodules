@@ -1,0 +1,3 @@
+[submodule "reference/kyber-c"]
+	path = reference/kyber-c
+	url = git@github.com:pq-crystals/kyber.git

@@ -50,4 +50,25 @@ def scratch():
 
     z = 1
 
+def c_comparisons():
+    # hash_input = 0xdeadbeef.to_bytes(4, 'little')
+    # c_hash_h = 0xB5EFFBB3E956C8ADB67687FAF087F864C083FB48E9F42F6CA62D4DF5DB7331E8
+    # c_hash_g = 0x261DAA56FF722DD4807F4427C60700661F72F5777F249B2B78AB5AF489B4C5338C9DC9AA1265580B43913AB191D7AB88D53653898876FC8FC67E8C4DA587D8B1
+
+    # p_hash_h = H(hash_input)
+    # p_hash_g = G(hash_input)
+
+    # assert(c_hash_h == int.from_bytes(p_hash_h, 'big'))
+    # assert(c_hash_g == int.from_bytes(p_hash_g[0] + p_hash_g[1], 'big'))
+
+    static_seed = 0x8CDE0C16E69FD32881FD56B8926F06AF5DE861298490F404B27234767F176EB0.to_bytes(32, 'little')
+    # c_hash_g = 0x855DD1E6847BB6E28483F21626785165F707ABEFE6571F4E39FB01EA883023533696F7DC6738DC5039ABB7A56854A54581F77A416DF07D4E799BC18BFB004F16
+    # p_hash_g = G(static_seed)
+    # assert(c_hash_g == int.from_bytes(p_hash_g[0] + p_hash_g[1], 'big'))
+
+    KeyGen(static_seed)
+
+
+    z = 1
+
 

@@ -11,7 +11,7 @@ def PRF(n: int, s: bytes, b: bytes) -> bytes:
 
 
 class cXOF:
-    def __init__(self, p: bytes, i: bytes, j: bytes):
+    def __init__(self, p: bytes, i: bytes, j: bytes, transposed=False):
         if len(p) != 32:
             raise ValueError('p not 32 bytes')
         if len(i) != 1:
@@ -22,13 +22,17 @@ class cXOF:
         self.i = i
         self.j = j
         self.bytesOut = 0
-        self.digest = shake_128(p + i + j).digest
+        if(transposed):
+            self.digest = shake_128(p + i + j).digest
+        else:
+            self.digest = shake_128(p + j + i).digest
 
     def read(self, b: int) -> bytes:
         out = self.digest(b + self.bytesOut)[self.bytesOut:]
         self.bytesOut += b
         return out
-    
+
+
 def XOF(p: bytes, i: bytes, j: bytes):
     x = cXOF(p, i, j)
     return x.read
@@ -41,4 +45,4 @@ def J(s: bytes) -> bytes:
 
 def G(b: bytes) -> bytes:
     d = sha3_512(b).digest()
-    return d[32:], d[:32]
+    return d[:32], d[32:]
