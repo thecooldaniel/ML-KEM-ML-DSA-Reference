@@ -1,6 +1,8 @@
-from ML_KEM.parameters import q
+from ML_KEM.parameters import params
 from ML_KEM.helpers import modq
 from ML_KEM.Auxiliary.ConversionCompression import BytesToBits
+
+q = params.MLKEM_PARAMS.q
 
 def SampleNTT(B: bytes) -> list:
     if len(B) < 672:

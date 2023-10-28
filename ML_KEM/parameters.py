@@ -1,51 +1,45 @@
-from enum import Enum
+from __future__ import annotations
+from ML_KEM.MLKEM_parameters import MLKEM_512, MLKEM_768, MLKEM_1024, MLKEM_PARAM_SET, MLKEM_PARAMETER
+from ML_KEM.reference_values import RefValues
+from ML_KEM.reference_values_512 import RefValues512
 
-n = 256
-q = 3329
-z = 17
-MONT = -1044 # 2^16 mod q
-QINV = -3327 # q^-1 mod 2^16
+class Parameters(object):
+    MLKEM_PARAMS: MLKEM_PARAM_SET
+    MLKEM_RFVALS: RefValues
 
-class MLKEM_512():
-    n = 256
-    q = 3329
-    z = 17
-    k = 2
-    n1 = 3
-    n2 = 2
-    du = 10
-    dv = 4
-    ekPKElen = 384 * 2  + 32
-    dkPKElen = 384 * 2
-    c1len = 32 * 10 * 2
-    c2len = 32 * 4
+    def __init__(self, params: MLKEM_PARAMETER):
+        self.MATCH_CREF_OUTPUTS = False
+        self.MLKEM_PARAM = params
+    
+    @property
+    def MLKEM_PARAM(self) -> MLKEM_PARAMETER:
+        return self._MLKEM_PARAM
+    
+    @MLKEM_PARAM.setter
+    def MLKEM_PARAM(self, value: MLKEM_PARAMETER):
+        if value == MLKEM_PARAMETER.ML_KEM_512:
+            self._MLKEM_PARAMS = MLKEM_512()
+        elif value == MLKEM_PARAMETER.ML_KEM_768:
+            self._MLKEM_PARAMS = MLKEM_768()
+        elif value == MLKEM_PARAMETER.ML_KEM_1024:
+            self._MLKEM_PARAMS = MLKEM_1024()
 
-class MLKEM_768():
-    n = 256
-    q = 3329
-    z = 17
-    k = 3
-    n1 = 2
-    n2 = 2
-    du = 10
-    dv = 4
-    ekPKElen = 384 * 3  + 32
-    dkPKElen = 384 * 3
-    c1len = 32 * 10 * 2
-    c2len = 32 * 4
+    @property
+    def MLKEM_PARAMS(self) -> MLKEM_PARAM_SET:
+        return self._MLKEM_PARAMS
+    
+    @property
+    def MLKEM_RFVALS(self) -> RefValues:
+        return self._MLKEM_RFVALS
+    
+    @MLKEM_RFVALS.setter
+    def MLKEM_RFVALS(self, value: MLKEM_PARAMETER):
+        if value == MLKEM_PARAMETER.ML_KEM_512:
+            self._MLKEM_RFVALS = RefValues512
+        # elif value == MLKEM_PARAMETER.ML_KEM_768:
+        #     self._MLKEM_RFVALS = MLKEM_768()
+        # elif value == MLKEM_PARAMETER.ML_KEM_1024:
+        #     self._MLKEM_RFVALS = MLKEM_1024()
 
-class MLKEM_1024():
-    n = 256
-    q = 3329
-    z = 17
-    k = 4
-    n1 = 2
-    n2 = 2
-    du = 11
-    dv = 5
-    ekPKElen = 384 * 4  + 32
-    dkPKElen = 384 * 4
-    c1len = 32 * 11 * 2
-    c2len = 32 * 5
-
-ML_KEM_PARAMETER = Enum('ML_KEM_PARAMETER', ['ML-KEM-512', 'ML-KEM-768', 'ML-KEM-1024'])
+params = Parameters(MLKEM_PARAMETER.ML_KEM_512)
+params.MLKEM_RFVALS = MLKEM_PARAMETER.ML_KEM_512

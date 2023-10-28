@@ -1,5 +1,7 @@
 from ML_KEM.helpers import modq
-from ML_KEM.parameters import q
+from ML_KEM.parameters import params
+
+q = params.MLKEM_PARAMS.q
 
 def BitsToBytes(b: int, l: int) -> bytes:
     # if b.bit_length() % 8 != 0:
@@ -62,6 +64,9 @@ def ByteEncode(d: int, F: list) -> bytes:
     b = 0
     for i in range(0, 256):
         a = F[i]
+        # Inputs mod q can be negative, must make positive
+        if(a < 0):
+            a += q
         for j in range(0, d):
             r = a & 1
             b |= r << (i * d + j)

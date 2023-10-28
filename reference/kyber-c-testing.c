@@ -22,7 +22,6 @@ extern void print_hex_bytes(unsigned char *in, size_t len);
 // }
 
 
-
 int main(void) {
 
     uint8_t in[4] = {0xef, 0xbe, 0xad, 0xde};
@@ -37,11 +36,30 @@ int main(void) {
     print_hex_bytes(htest, 32);
     print_hex_bytes(gtest, 64);
 
-    uint8_t pk[800];
-    uint8_t sk[768]; // Kyber 512 params
+    // uint8_t pk[800];
+    // uint8_t sk[768]; // Kyber 512 params
 
+    // from kyber_c/ref/test_keys.c
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sk[CRYPTO_SECRETKEYBYTES];
+    uint8_t ct[CRYPTO_CIPHERTEXTBYTES];
+    uint8_t key_a[CRYPTO_BYTES];
+    uint8_t key_b[CRYPTO_BYTES] = {0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde, 0xef, 0xbe, 0xad, 0xde};
+    
+    //Alice generates a public key
     crypto_kem_keypair(pk, sk);
 
+    // ref/kem.c -> ref/indcpa.c:indcpa_enc()
+    //Bob derives a secret key and creates a response
+    crypto_kem_enc(ct, key_b, pk);
+
+    //Alice uses Bobs response to get her shared key
+    crypto_kem_dec(key_a, ct, sk);
+
+    if(memcmp(key_a, key_b, CRYPTO_BYTES)) {
+        printf("ERROR keys\n");
+        return 1;
+    }
     
 
     return 0;

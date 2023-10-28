@@ -1,6 +1,6 @@
 
 from ML_KEM.helpers import modq, montgomery_reduce, barret_reduce
-import ML_KEM.parameters as params
+from ML_KEM.parameters import params
 
 zetas = [
   -1044,  -758,  -359, -1517,  1493,  1422,   287,   202,
@@ -20,8 +20,6 @@ zetas = [
   -1185, -1530, -1278,   794, -1510,  -854,  -870,   478,
    -108,  -308,   996,   991,   958, -1460,  1522,  1628
 ]
-
-MATCH_CREF_OUTPUTS = True
 
 def BitRev7(i: int) -> int:
     return int('{:07b}'.format(i)[::-1], 2)
@@ -43,7 +41,7 @@ def NTT(f: list) -> list:
     while length >= 2:
         start = 0
         for start in range(0, 256, start+2*length):
-            if MATCH_CREF_OUTPUTS:
+            if params.MATCH_CREF_OUTPUTS:
                 zeta = zetas[k]
             else:
                 kr = BitRev7(k)
@@ -53,7 +51,7 @@ def NTT(f: list) -> list:
 
             for j in range(start, start + length):
                 t = zeta * fh[j+length]
-                if MATCH_CREF_OUTPUTS:
+                if params.MATCH_CREF_OUTPUTS:
                     t = montgomery_reduce(t)
                 else:
                     t = modq(t)
@@ -62,8 +60,8 @@ def NTT(f: list) -> list:
                 fh[j] = fh[j]+t
                 # fh[j] = modq(fh[j])
         length = length // 2
-    for i in range(0, params.n):
-        if MATCH_CREF_OUTPUTS:
+    for i in range(0, params.MLKEM_PARAMS.n):
+        if params.MATCH_CREF_OUTPUTS:
             fh[i] = barret_reduce(fh[i])
         else:
             fh[i] = modq(fh[i])
@@ -79,7 +77,7 @@ def NTTINV(fh: list) -> list:
         start = 0
         for start in range(start, 256, start+2*length):
             kr = BitRev7_2(k)
-            zeta = params.z**kr
+            zeta = params.MLKEM_PARAMS.z**kr
             zeta = modq(zeta)
             k -= 1
 
@@ -104,11 +102,11 @@ def MultiplyNTTs(fh: list, gh: list) -> list:
     
     h = [0] * 256
     for i in range(0, 128):
-        zeta = 2*BitRev7_2(i) + 1
-        zeta = params.z**zeta
+        zeta = 2*BitRev7(i) + 1
+        zeta = params.MLKEM_PARAMS.z**zeta
         zeta = modq(zeta)
 
-        h[2*1], h[2*i+1] = BaseCaseMultiply(fh[2*i], fh[2*i+1], gh[2*i], gh[2*i+1], zeta)
+        h[2*i], h[2*i+1] = BaseCaseMultiply(fh[2*i], fh[2*i+1], gh[2*i], gh[2*i+1], zeta)
     
     return h
     
